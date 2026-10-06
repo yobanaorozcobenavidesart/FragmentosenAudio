@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragmentos en Audio | Explorando Museos y Arte Latinoamericano</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #000000;
+            color: #e8e2d8;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Back to home link */
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #d4af37;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 50px;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            margin-bottom: 2rem;
+        }
+
+        .back-home:hover {
+            background: rgba(212, 175, 55, 0.12);
+            border-color: #d4af37;
+            color: #ffd700;
+        }
+
+        .back-home .arrow {
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .back-home:hover .arrow {
+            transform: translateX(-3px);
+        }
+
+        /* Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #d4af37;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 12px rgba(212, 175, 55, 0.25);
+        }
+
+        .section-header .subtitle {
+            font-size: 1.15rem;
+            color: #d4cdc2;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-header .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #b8860b, #d4af37, #ffd700);
+            margin: 1.2rem auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Episode Card */
+        .episode-card {
+            background: #0d0d0d;
+            border-radius: 18px;
+            box-shadow: 0 4px 30px rgba(212, 175, 55, 0.08);
+            padding: 2rem 2rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #2a2318;
+        }
+
+        .episode-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #b8860b, #d4af37, #ffd700);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.35);
+        }
+
+        .episode-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: #f5f0e6;
+        }
+
+        .episode-description {
+            font-size: 1rem;
+            color: #d4cdc2;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Spotify embed */
+        .spotify-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .spotify-wrapper iframe {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        /* Episode schedule */
+        .schedule {
+            margin-bottom: 2.5rem;
+        }
+
+        .schedule h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #d4af37;
+        }
+
+        .schedule-list {
+            list-style: none;
+        }
+
+        .schedule-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.7rem 1rem;
+            background: #0d0d0d;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #2a2318;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .schedule-list li:hover {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        .schedule-list li.published {
+            border-left-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.12);
+        }
+
+        .schedule-list li .date {
+            font-weight: 600;
+            color: #d4af37;
+            min-width: 110px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-list li .ep-title {
+            color: #e8e2d8;
+        }
+
+        .schedule-list li .status {
+            margin-left: auto;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 0.25rem 0.7rem;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+
+        .status-published {
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .status-upcoming {
+            background: #1a1a1a;
+            color: #b8b0a4;
+            border: 1px solid #2a2a2a;
+        }
+
+        /* Book CTA */
+        .book-cta {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1408 100%);
+            border-radius: 18px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: #fff;
+            border: 1px solid #2a2318;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.08);
+        }
+
+        .book-cta h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #d4af37;
+        }
+
+        .book-cta p {
+            font-size: 1.05rem;
+            color: #e0d9ce;
+            margin-bottom: 1.5rem;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Nombre de la autora: más pequeño y discreto */
+        .author-name {
+            font-size: 0.82rem;
+            font-weight: 400;
+            color: #c9c1b5;
+            font-style: italic;
+        }
+
+        /* Book details / características */
+        .book-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 0 auto 1.8rem;
+            max-width: 660px;
+        }
+
+        .detail-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 50px;
+            padding: 0.45rem 1rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .detail-item .detail-label {
+            color: #d4cdc2;
+            font-weight: 500;
+        }
+
+        .detail-item .detail-value {
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        .book-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn-book {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+            cursor: pointer;
+            background: linear-gradient(135deg, #b8860b 0%, #d4af37 50%, #ffd700 100%);
+            color: #000;
+            border: none;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+        }
+
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.55);
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #ffe97a 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .back-home {
+                font-size: 0.82rem;
+                padding: 0.45rem 0.85rem;
+            }
+
+            .section-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-header .subtitle {
+                font-size: 1rem;
+            }
+
+            .episode-card {
+                padding: 1.3rem;
+            }
+
+            .episode-title {
+                font-size: 1.25rem;
+            }
+
+            .episode-description {
+                font-size: 0.95rem;
+            }
+
+            .schedule-list li {
+                flex-wrap: wrap;
+                gap: 0.4rem;
+            }
+
+            .schedule-list li .date {
+                min-width: 100%;
+                font-size: 0.8rem;
+            }
+
+            .schedule-list li .status {
+                margin-left: 0;
+            }
+
+            .book-cta {
+                padding: 1.8rem 1.2rem;
+            }
+
+            .book-cta p {
+                font-size: 0.98rem;
+            }
+
+            .book-details {
+                gap: 0.5rem;
+            }
+
+            .detail-item {
+                font-size: 0.78rem;
+                padding: 0.4rem 0.85rem;
+            }
+
+            .book-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-book {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="container">
+
+        <!-- Back to home -->
+        <a
+            href="https://explorandomuseosyartelatinoamericano.netlify.app/"
+            class="back-home">
+            <span class="arrow">←</span> Volver a la página principal
+        </a>
+
+        <!-- Header -->
+        <div class="section-header">
+            <h1>Fragmentos en Audio</h1>
+            <p class="subtitle">
+                Escucha, descubre y encuentra tus próximas lecturas.
+            </p>
+            <div class="divider"></div>
+        </div>
+
+        <!-- Current Episode -->
+        <div class="episode-card" id="current-episode">
+            <span class="episode-label">Episodio 1 · Introducción</span>
+            <h2 class="episode-title">Iniciando este episodio: la introducción</h2>
+            <p class="episode-description">
+                El primer fragmento de la serie. Escucha la introducción del libro
+                <em>Reflejos del Alma: Poemas de Emociones Desnudas</em>.
+            </p>
+            <div class="spotify-wrapper">
+                <iframe
+                    data-testid="embed-iframe"
+                    style="border-radius:12px"
+                    src="https://open.spotify.com/embed/episode/1062xRPGGsL0xVpflkM1DF?utm_source=generator&si=dcc9ff0ca8954411"
+                    width="100%"
+                    height="352"
+                    frameborder="0"
+                    allowfullscreen=""
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="schedule">
+            <h2>Calendario de publicaciones</h2>
+            <ul class="schedule-list" id="schedule-list">
+                <!-- Episodes will be rendered by JavaScript -->
+            </ul>
+        </div>
+
+        <!-- Book CTA -->
+        <div class="book-cta">
+            <h2>¿Te gustó el fragmento?</h2>
+            <p>
+                <em>Reflejos del Alma: Poemas de Emociones Desnudas</em>,
+                <span class="author-name">autora Yobana Orozco Benavides</span>
+                ya está disponible. Elige tu formato favorito:
+            </p>
+
+            <!-- Características del libro -->
+            <div class="book-details">
+                <span class="detail-item">
+                    <span class="detail-label">Publicado:</span>
+                    <span class="detail-value">20 de marzo, 2024</span>
+                </span>
+                <span class="detail-item">
+                    <span class="detail-label">Idioma:</span>
+                    <span class="detail-value">Español</span>
+                </span>
+                <span class="detail-item">
+                    <span class="detail-label">Páginas:</span>
+                    <span class="detail-value">90</span>
+                </span>
+                <span class="detail-item">
+                    <span class="detail-label">ISBN-13:</span>
+                    <span class="detail-value">979-8320374345</span>
+                </span>
+            </div>
+
+            <div class="book-buttons">
+                <a
+                    href="https://www.amazon.com/Reflejos-del-Alma-Emociones-Desnudas-ebook/dp/B0CZCQCFXK/ref=tmm_kin_swatch_0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-book">
+                    Libro digital
+                </a>
+                <a
+                    href="https://www.amazon.com/Reflejos-del-Alma-Emociones-Desnudas/dp/B0CZCSRWGZ/ref=tmm_pap_swatch_0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-book">
+                    Libro físico (Tapa blanda)
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        (function () {
+            // =============================================
+            // CONFIGURACIÓN DE EPISODIOS
+            // =============================================
+            // Cuando tengas la URL de cada episodio de Spotify,
+            // reemplaza el valor de "spotifyUrl" con la URL del embed.
+            //
+            // Ejemplo de URL de embed:
+            // https://open.spotify.com/embed/episode/ID_DEL_EPISODIO?utm_source=generator
+            // =============================================
+
+            const EPISODES = [
+                {
+                    id: 1,
+                    date: '2026-10-06',
+                    label: 'Episodio 1 · Introducción',
+                    title: 'Iniciando este episodio: la introducción',
+                    spotifyUrl: 'https://open.spotify.com/embed/episode/1062xRPGGsL0xVpflkM1DF?utm_source=generator&si=dcc9ff0ca8954411'
+                },
+                {
+                    id: 2,
+                    date: '2026-10-07',
+                    label: 'Episodio 2',
+                    title: 'Fragmento 2',
+                    spotifyUrl: '' // ← Pega aquí la URL del embed del Episodio 2
+                },
+                {
+                    id: 3,
+                    date: '2026-10-08',
+                    label: 'Episodio 3',
+                    title: 'Fragmento 3',
+                    spotifyUrl: '' // ← Pega aquí la URL del embed del Episodio 3
+                },
+                {
+                    id: 4,
+                    date: '2026-10-09',
+                    label: 'Episodio 4',
+                    title: 'Fragmento 4',
+                    spotifyUrl: '' // ← Pega aquí la URL del embed del Episodio 4
+                },
+                {
+                    id: 5,
+                    date: '2026-10-10',
+                    label: 'Episodio 5 · Final',
+                    title: 'Fragmento 5 — Cierre',
+                    spotifyUrl: '' // ← Pega aquí la URL del embed del Episodio 5
+                }
+            ];
+
+            // =============================================
+            // LÓGICA DE PUBLICACIÓN AUTOMÁTICA
+            // =============================================
+            // const TODAY = new Date('2026-10-06');
+            const TODAY = new Date();
+
+            TODAY.setHours(0, 0, 0, 0);
+
+            const scheduleList = document.getElementById('schedule-list');
+            const currentEpisodeCard = document.getElementById('current-episode');
+
+            // Determinar qué episodios ya se publicaron
+            const publishedEpisodes = EPISODES.filter(ep => {
+                const epDate = new Date(ep.date + 'T00:00:00');
+                return epDate <= TODAY;
+            });
+
+            // El episodio más reciente publicado es el que se muestra arriba
+            const latestEpisode = publishedEpisodes.length > 0
+                ? publishedEpisodes[publishedEpisodes.length - 1]
+                : EPISODES[0];
+
+            // Actualizar la tarjeta del episodio actual
+            if (latestEpisode) {
+                const labelEl = currentEpisodeCard.querySelector('.episode-label');
+                const titleEl = currentEpisodeCard.querySelector('.episode-title');
+                const iframeEl = currentEpisodeCard.querySelector('iframe');
+
+                if (labelEl) labelEl.textContent = latestEpisode.label;
+                if (titleEl) titleEl.textContent = latestEpisode.title;
+
+                if (iframeEl && latestEpisode.spotifyUrl) {
+                    iframeEl.src = latestEpisode.spotifyUrl;
+                } else if (iframeEl && !latestEpisode.spotifyUrl) {
+                    const wrapper = currentEpisodeCard.querySelector('.spotify-wrapper');
+                    if (wrapper) {
+                        wrapper.innerHTML =
+                            '<p style="text-align:center;color:#d4cdc2;padding:2rem;background:#0d0d0d;border-radius:12px;border:1px solid #2a2318;">' +
+                            'El audio de este episodio estará disponible próximamente.</p>';
+                    }
+                }
+            }
+
+            // Renderizar el calendario
+            EPISODES.forEach(function (ep) {
+                const epDate = new Date(ep.date + 'T00:00:00');
+                const isPublished = epDate <= TODAY;
+
+                const li = document.createElement('li');
+                if (isPublished) li.classList.add('published');
+
+                const dateStr = epDate.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                li.innerHTML =
+                    '<span class="date">' + dateStr + '</span>' +
+                    '<span class="ep-title">' + ep.label + ' — ' + ep.title + '</span>' +
+                    '<span class="status ' + (isPublished ? 'status-published' : 'status-upcoming') + '">' +
+                    (isPublished ? 'Publicado' : 'Próximamente') +
+                    '</span>';
+
+                scheduleList.appendChild(li);
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
